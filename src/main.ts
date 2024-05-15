@@ -1,8 +1,32 @@
 import { App, Plugin, addIcon, setIcon } from 'obsidian';
-import { AppSetting, PluginsGroup } from './types';
 import { DEFAULT_SETTINGS, SettingsOptionsManagementSettings } from './settings';
 
+// import { PluginsGroup } from './types';
+
 // Remember to rename these classes and interfaces!
+
+declare module "obsidian" {
+  interface App {
+    setting: AppSetting;
+    activeTabValue: AppActiveTab;
+    settingTabs: AppSettingTab[];
+    tabContentContainer: HTMLElement;
+  }
+  interface AppActiveTab {
+    app: App;
+    id: string;
+    name: string;
+  }
+  interface AppSettingTab {
+    id: string;
+    name: string;
+  }
+  interface AppSetting {
+    activeTabValue: AppActiveTab;
+    settingTabs: AppSettingTab[];
+    tabContentContainer: HTMLElement;
+  }
+}
 
 export default class SettingsOptionsManagement extends Plugin {
   app: App;
@@ -19,8 +43,7 @@ export default class SettingsOptionsManagement extends Plugin {
     
     // add new svg icons: toggle-none which is not available in lucide. It's a toggle icon but the circle is in the middle of the rect.
     this.addNewSvgIcons(); 
-    //@ts-ignore
-    await this.createPMMenu(this, this.app?.setting);
+    await this.createSettingsOptionsMenu();
   }
 
 	onunload() {
@@ -35,26 +58,22 @@ export default class SettingsOptionsManagement extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-  createPMMenu(pm: SettingsOptionsManagement, setting: AppSetting) : void {
-    Object.defineProperty(setting, 'activeTab', {
+  createSettingsOptionsMenu() : void {
+    Object.defineProperty(this.app.setting, 'activeTab', {
       get() {
-        return setting.activeTabValue;
+        return this.app.setting.activeTabValue;
       },
-      set(value) {
-        setting.activeTabValue = value;
-        if (pm.optionsmenuEl) {
-          pm.optionsmenuEl.remove();
-          pm.optionsmenuEl = null;
-          document.body.classList.remove('pm-show-enabled');
-          document.body.classList.remove('pm-show-disabled');
-          document.body.classList.remove('pm-grid');
+      set: (value) => {
+        this.app.setting.activeTabValue = value;
+        if (this.optionsmenuEl) {
+          this.deleteMenu();
         }
-        if (pm.optionsid && pm.optionsid.includes(value?.id)) {
-          pm.createSwitcher();
-          pm.createGridStyle();
-          // pm.createSaveButton(); // a button to backup the current settings options
+        if (this.optionsid && this.optionsid.includes(value?.id)) {
+            this.createSwitcher();
+            this.createGridStyle();
+            // this.createSaveButton(); // a button to backup the current settings options
+          }
         }
-      }
     });
   }
 
@@ -113,35 +132,45 @@ export default class SettingsOptionsManagement extends Plugin {
     this.saveSettings();
   }
 
-  createSaveButton() : void {
-    if (!this.optionsmenuEl) {
-      return;
+  // createSaveButton() : void {
+  //   if (!this.optionsmenuEl) {
+  //     return;
+  //   }
+  //   const saveEl = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'save' } });
+  //   setIcon(saveEl, 'save');
+  //   saveEl.addEventListener('click', () => {
+  //     savePluginsGroups(this);
+  //   });
+  // }
+
+  deleteMenu() : void {
+    if (this.optionsmenuEl) {
+      this.optionsmenuEl.remove();
+      this.optionsmenuEl = null;
+      document.body.classList.remove('pm-show-enabled');
+      document.body.classList.remove('pm-show-disabled');
+      document.body.classList.remove('pm-grid');
     }
-    const saveEl = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'save' } });
-    setIcon(saveEl, 'save');
-    saveEl.addEventListener('click', () => {
-      savePluginsGroups(this);
-    });
   }
 }
 
-export function createPluginInfo(key: string) {
-  return {
-    id: this.app.plugins.plugins[key].manifest.id,
-    name: this.app.plugins.plugins[key].manifest.name,
-    enabled: !!this.app.plugins.enabledPlugins[this.app.plugins.plugins[key].manifest.id],
-  }
-}
+// export function createPluginInfo(key: string) {
+//   return {
+//     id: this.app.plugins.plugins[key].manifest.id,
+//     name: this.app.plugins.plugins[key].manifest.name,
+//     enabled: !!this.app.plugins.enabledPlugins[this.app.plugins.plugins[key].manifest.id],
+//   }
+// }
 
-export function savePluginsGroups(plugin: SettingsOptionsManagement) {
-  // @ts-ignore
-  const pluginsgroup = {id: "Plugin Group: " + new Date().getTime().toString(), plugins: []} as PluginsGroup;
-  for (const key in this.app.plugins.plugins) {
-    pluginsgroup.plugins.push(createPluginInfo.call(this, key));
-  }
-  if (!plugin.settings.pluginsbackup) {
-    plugin.settings.pluginsbackup = [];
-  }
-  plugin.settings.pluginsbackup.push(pluginsgroup);
-  plugin.saveSettings();
-}
+// export function savePluginsGroups(plugin: SettingsOptionsManagement) {
+//   // @ts-ignore
+//   const pluginsgroup = {id: "Plugin Group: " + new Date().getTime().toString(), plugins: []} as PluginsGroup;
+//   for (const key in this.app.plugins.plugins) {
+//     pluginsgroup.plugins.push(createPluginInfo.call(this, key));
+//   }
+//   if (!plugin.settings.pluginsbackup) {
+//     plugin.settings.pluginsbackup = [];
+//   }
+//   plugin.settings.pluginsbackup.push(pluginsgroup);
+//   plugin.saveSettings();
+// }
