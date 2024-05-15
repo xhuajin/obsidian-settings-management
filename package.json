@@ -1,7 +1,7 @@
 {
-	"name": "obsidian-sample-plugin",
+	"name": "settings-options-management",
 	"version": "1.0.0",
-	"description": "This is a sample plugin for Obsidian (https://obsidian.md)",
+	"description": "Allows you to better manage your settings options panel.",
 	"main": "main.js",
 	"scripts": {
 		"dev": "node esbuild.config.mjs",
