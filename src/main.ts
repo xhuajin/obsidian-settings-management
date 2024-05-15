@@ -1,4 +1,4 @@
-import { App, Plugin, addIcon, setIcon } from 'obsidian';
+import { App, Platform, Plugin, addIcon, setIcon } from 'obsidian';
 import { DEFAULT_SETTINGS, SettingsOptionsManagementSettings } from './settings';
 
 // import { PluginsGroup } from './types';
@@ -35,6 +35,10 @@ export default class SettingsOptionsManagement extends Plugin {
   optionsid: string[];
 
 	async onload() {
+    if (Platform.isMobileApp) {
+			console.log(`floating toc disable loading on mobile`);
+			return;
+		}
     await this.loadSettings();
     await this.saveSettings();
     // this.addSettingTab(new PluginsManagementSettingTab(this.app, this)); // 准备用于存放备份设置
