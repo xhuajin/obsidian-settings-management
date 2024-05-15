@@ -47,6 +47,7 @@ export default class SettingsOptionsManagement extends Plugin {
   }
 
 	onunload() {
+    this.deleteMenu();
     this.saveSettings();
 	}
 
@@ -59,16 +60,20 @@ export default class SettingsOptionsManagement extends Plugin {
 	}
 
   createSettingsOptionsMenu() : void {
+    if (this.optionsid && this.app.setting.activeTabValue && this.optionsid.includes(this.app.setting.activeTabValue.id)) {
+      this.createSwitcher();
+      this.createGridStyle();
+      // this.createSaveButton(); // a button to backup the current settings options
+    }
+
     Object.defineProperty(this.app.setting, 'activeTab', {
       get() {
         return this.app.setting.activeTabValue;
       },
       set: (value) => {
         this.app.setting.activeTabValue = value;
-        if (this.optionsmenuEl) {
-          this.deleteMenu();
-        }
-        if (this.optionsid && this.optionsid.includes(value?.id)) {
+        this.deleteMenu();
+        if (this.optionsid && value && this.optionsid.includes(value.id)) {
             this.createSwitcher();
             this.createGridStyle();
             // this.createSaveButton(); // a button to backup the current settings options
@@ -89,7 +94,7 @@ export default class SettingsOptionsManagement extends Plugin {
     }
     const switcherEl = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'switcher' } });
     setIcon(switcherEl, 'toggle-none');
-    switcherEl.addEventListener('click', () => {
+    this.registerDomEvent(switcherEl, 'click', () => {
       if (document.body.classList.contains('pm-show-enabled')) {
         document.body.classList.remove('pm-show-enabled');
         document.body.classList.add('pm-show-disabled');
@@ -117,8 +122,7 @@ export default class SettingsOptionsManagement extends Plugin {
     } else if (this.settings.pluginsgridtype === 'list') {
       setIcon(gridStyleEl, 'menu');
     }
-    
-    gridStyleEl.addEventListener('click', () => {
+    this.registerDomEvent(gridStyleEl, 'click', () => {
       if (this.settings.pluginsgridtype === 'grid') {
         document.body.classList.remove('pm-grid');
         setIcon(gridStyleEl, 'menu');
@@ -138,7 +142,7 @@ export default class SettingsOptionsManagement extends Plugin {
   //   }
   //   const saveEl = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'save' } });
   //   setIcon(saveEl, 'save');
-  //   saveEl.addEventListener('click', () => {
+  //   this.registerDomEvent(saveEl, 'click', () => {
   //     savePluginsGroups(this);
   //   });
   // }
