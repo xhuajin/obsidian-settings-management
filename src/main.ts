@@ -63,7 +63,8 @@ export default class SettingsOptionsManagement extends Plugin {
 		await this.saveData(this.settings);
 	}
 
-  createSettingsOptionsMenu() : void {
+  async createSettingsOptionsMenu() {
+    
     if (this.optionsid && this.app.setting.activeTabValue && this.optionsid.includes(this.app.setting.activeTabValue.id)) {
       this.createSwitcher();
       this.createGridStyle();
@@ -92,7 +93,7 @@ export default class SettingsOptionsManagement extends Plugin {
 
   createSwitcher() : void {
     if (!this.optionsmenuEl) {
-      const containerEl = document.querySelector('.vertical-tab-content-container') || null;
+      const containerEl = this.app.setting.tabContentContainer || document.querySelector('.vertical-tab-content-container') || null;
       if (!containerEl) { return;}
       this.optionsmenuEl = containerEl.createEl('div', { attr: { class: 'pm-tabs' } });
     }
@@ -115,7 +116,7 @@ export default class SettingsOptionsManagement extends Plugin {
 
   createGridStyle() : void {
     if (!this.optionsmenuEl) {
-      const containerEl = document.querySelector('.vertical-tab-content-container') || null;
+      const containerEl = this.app.setting.tabContentContainer || document.querySelector('.vertical-tab-content-container') || null;
       if (!containerEl) { return;}
       this.optionsmenuEl = containerEl.createEl('div', { attr: { class: 'pm-tabs' } });
     }
