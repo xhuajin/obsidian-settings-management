@@ -1,9 +1,9 @@
 {
 	"id": "settings-options-management",
-	"name": "Settings Options Management",
-	"version": "1.0.0",
+	"name": "Settings Management",
+	"version": "1.0.1",
 	"minAppVersion": "1.0.0",
-	"description": "Allows you to better manage your settings options panel.",
+	"description": "Manage settings options, including show enabled/disabled plugins and css, grid layout, save current plugins/css enable config for quick enable/disable, etc.",
 	"author": "Huajin",
 	"authorUrl": "https://github.com/xhuajin",
 	"isDesktopOnly": true

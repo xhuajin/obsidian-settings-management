@@ -37,7 +37,7 @@ const context = await esbuild.context({
 	logLevel: "info",
 	sourcemap: prod ? false : "inline",
 	treeShaking: true,
-	outdir: "../SOMTestVault/.obsidian/plugins/obsidian-settings-options-management",
+	outdir: "../SettingsManagementTestVault/.obsidian/plugins/settings-management",
 });
 
 if (prod) {

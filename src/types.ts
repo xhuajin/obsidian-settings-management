@@ -1,14 +1,11 @@
-export interface PluginInfo {
+export interface EnabledPlugins {
+  id: string;
   name: string;
-  id: string;
-  enabled: boolean;
+  enabledplugins: Array<string>;
 }
 
-export interface PluginsGroup {
+export interface EnabledCssSnippets {
   id: string;
-  plugins: PluginInfo[];
-}
-
-export interface PluginsGroups {
-  templates: PluginsGroup[];
+  name: string;
+  enabledcsssnippets: Array<string>;
 }

@@ -1,55 +1,28 @@
-# Obsidian Settings Options Management
+# Overview
 
-「Settings Options Management」 add a menu in the buttom right corner of the Settings Options which can select settings-item(enabled, disabled, all) and adjust the layout of the current page(list/grid). This plugin makes it easy for people who have multiple plugins or multiple css snippets to manage their plugins and css.
+This plugin add a menu in the buttom right corner of the Settings Tab. It provides some functions.
+
+- Show all enabled/disabled plugins and css
+- Grid layout
+- Save current plugins/css enable config
+- Quickly enable/disable the configuration that you saved.
 
 ## Feature
 
-### 「Settings -> Appearance -> CSS snippets」
+### Show all enabled/disabled plugins and css.
 
-A menu in the buttom right corner of 'Appearace'.
+https://github.com/xhuajin/obsidian-settings-management/assets/114134574/1a3bfe1e-4947-4ec7-a227-419f9339ca38
 
-![list layout](./images/AppearanceListNormal.png)
+### Grid Layout
 
-Show all enabled/disabled css snippets.
+![grid-view](./images/GridView.png)
 
-![list & enabled](./images/AppearanceListToggleEnabled.png)
+### About Configuration
 
-![list & disabled](./images/AppearanceListToggleDisabled.png)
+Save current config and enabled it.
 
-Grid layout
+https://github.com/xhuajin/obsidian-settings-management/assets/114134574/c6587b4f-c1b8-4bbf-8125-20bc988be0d6
 
-![grid layout](./images/AppearanceGridNormal.png)
+Right click the config can open a menu to delete or rename the config.
 
-![grid & enabled](./images/AppearanceGridToggleEnabled.png)
-
-![grid & disabled](./images/AppearanceGridToggleDisabled.png)
-
-
-### 「Settings -> Hotkeys」
-
-![list & enabled](./images/HotkeysListToggleEnabled.png)
-
-![grid & disabled](./images/HotkeysGridToggleDisabled.png)
-
-### 「Settings -> Core plugins」
-
-![list & enabled](./images/CorePluginsListToggleEnabled.png)
-
-![grid & disabled](./images/CorePluginsGridToggleDisabled.png)
-
-
-### 「Settings -> Community Plugins」
-
-Show all enabled/disabled plugins.
-
-![list & enabled](./images/CommunityPluginsListToggleEnabled.png)
-
-![list & disabled](./images/CommunityPluginsListToggleDisabled.png)
-
-Grid layout
-
-![grid layout](./images/CommunityPluginsGridNormal.png)
-
-![grid & enabled](./images/CommunityPluginsGridToggleEnabled.png)
-
-![grid & disabled](./images/CommunityPluginsGridToggleDisabled.png)
+![Delete/Rename-Config](./images/deleteAndRenameConfig.png)
