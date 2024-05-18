@@ -57,7 +57,7 @@ export default class SettingsOptionsManagement extends Plugin {
     this.currentActiveTab = '';
     this.optionsmenuEl = null;
 
-    // add new svg icons: toggle-none which is not available in lucide. It's a toggle icon but the circle is in the middle of the rect.
+    // add new svg icons: toggle-center which is not available in lucide. It's a toggle icon but the circle is in the middle of the rect.
     this.addNewSvgIcons();
     await this.createSettingsOptionsMenu();
   }
@@ -116,7 +116,7 @@ export default class SettingsOptionsManagement extends Plugin {
   }
 
   addNewSvgIcons() {
-    addIcon('toggle-center', '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-toggle-left"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="12" cy="12" r="2"/></svg>')
+    addIcon('toggle-center', '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-toggle-center"><rect width="20" height="12" x="2" y="6" rx="6" ry="6"/><circle cx="12" cy="12" r="2"/></svg>')
   }
 
   createSwitcher(): void {
@@ -137,8 +137,7 @@ export default class SettingsOptionsManagement extends Plugin {
       switcherButton.setIcon('toggle-center');
       switcherButton.setTooltip('All');
     }
-    
-    
+
     switcherButton.onClick(() => {
       if (document.body.classList.contains('pm-show-enabled')) {
         document.body.classList.remove('pm-show-enabled');
@@ -168,23 +167,23 @@ export default class SettingsOptionsManagement extends Plugin {
     if (this.settings.pluginsgridtype === 'grid') {
       document.body.classList.add('pm-grid');
       gridStyleButton.setIcon('layout-grid');
-      gridStyleButton.setTooltip('Grid Layout');
+      gridStyleButton.setTooltip('Grid layout');
     } else {
       document.body.classList.remove('pm-grid');
       gridStyleButton.setIcon('menu');
-      gridStyleButton.setTooltip('List Layout');
+      gridStyleButton.setTooltip('List layout');
     }
 
     gridStyleButton.onClick(async () => {
       if (this.settings.pluginsgridtype === 'grid') {
         document.body.classList.remove('pm-grid');
         gridStyleButton.setIcon('menu');
-        gridStyleButton.setTooltip('List Layout');
+        gridStyleButton.setTooltip('List layout');
         this.settings.pluginsgridtype = 'list';
       } else {
         document.body.classList.add('pm-grid');
         gridStyleButton.setIcon('layout-grid');
-        gridStyleButton.setTooltip('Grid Layout');
+        gridStyleButton.setTooltip('Grid layout');
         this.settings.pluginsgridtype = 'grid';
       }
       await this.saveSettings();
@@ -199,7 +198,7 @@ export default class SettingsOptionsManagement extends Plugin {
     const saveEl = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'save' } });
     const saveButton = new ButtonComponent(saveEl);
     saveButton.setIcon('save');
-    saveButton.setTooltip('Save current Configuration.');
+    saveButton.setTooltip('Save current configuration.');
     saveButton.onClick(async () => {
       this.saveCurrentConfig();
       await this.saveSettings();
@@ -254,7 +253,7 @@ export default class SettingsOptionsManagement extends Plugin {
       this.configListEl && this.configListEl.remove();
       this.configListEl = null;
     });
-    
+
     for (let i = 0; i < this.settings.enabledcsssnippets.length; i++) {
       const configItemEl = this.configListEl.createEl('div', { attr: { class: 'pm-tab pm-config', value: this.settings.enabledcsssnippets[i].id } });
       const configItemButton = new ButtonComponent(configItemEl);
@@ -368,8 +367,8 @@ export default class SettingsOptionsManagement extends Plugin {
         )
       getNameModal.contentEl.find('input').focus();
     }
-    getNameModal.open();    
-    
+    getNameModal.open();
+
     await this.saveSettings();
   }
 
@@ -378,7 +377,7 @@ export default class SettingsOptionsManagement extends Plugin {
     const snippets = Array.from(snippetsListEl).map((snippetEl) => {
       return snippetEl.querySelector('.setting-item-name')?.textContent || '';
     });
-    
+
     return {
       id: Date.now().toString(10),
       name: configName,
