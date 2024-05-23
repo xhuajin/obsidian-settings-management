@@ -20,11 +20,17 @@ declare module "obsidian" {
   interface AppSettingTab {
     id: string;
     name: string;
+    containerEl: HTMLElement;
+    navEl: HTMLElement;
   }
   interface AppSetting {
     activeTabValue: AppActiveTab;
     settingTabs: AppSettingTab[];
     tabContentContainer: HTMLElement;
+    lastTabId: string;
+    onOpen(): void;
+    openTabById(id: string): boolean;
+    openTab(tab: AppSettingTab): void;
   }
   interface PluginsConfig {
     manifests: {
@@ -34,6 +40,9 @@ declare module "obsidian" {
     plugins: {
       [key: string]: Plugin;
     }
+    isEnabled(pluginid: string): boolean;
+    enablePluginAndSave(pluginid: string): Promise<void>;
+    disablePluginAndSave(pluginid: string): Promise<void>;
   }
 }
 
@@ -80,17 +89,33 @@ export default class SettingsOptionsManagement extends Plugin {
       this.createMenu(this.app.setting.activeTabValue.id);
     }
 
-    Object.defineProperty(this.app.setting, 'activeTab', {
-      get() {
-        return this.app.setting.activeTabValue;
-      },
-      set: (value) => {
-        this.app.setting.activeTabValue = value;
-        if (value) {
-          this.createMenu(value.id);
-        }
+    const setting = this.app.setting;
+    setting.onOpen = () => {
+      setting.openTabById(setting.lastTabId) || setting.openTab(setting.settingTabs[0])
+      if (this.optionsid && this.optionsid.includes(setting.lastTabId)) {
+        this.createMenu(setting.lastTabId);
       }
+    }
+
+    // 监听每个 tab 是否被点击
+    setting.settingTabs.forEach(async (tab) => {
+      this.registerDomEvent(tab.navEl, 'click', () => {
+        setting.openTabById(tab.id) || setting.openTab(tab);
+        this.createMenu(tab.id);
+      });
     });
+
+    // Object.defineProperty(this.app.setting, 'activeTab', {
+    //   get() {
+    //     return this.app.setting.activeTabValue;
+    //   },
+    //   set: (value) => {
+    //     this.app.setting.activeTabValue = value;
+    //     if (value) {
+    //       this.createMenu(value.id);
+    //     }
+    //   }
+    // });
   }
 
   createMenu(id: string): void {
@@ -226,7 +251,7 @@ export default class SettingsOptionsManagement extends Plugin {
     // 创建一个配置列表，用于存放配置，点击后可以使用对应的配置
     const configList = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'config' } });
     setIcon(configList, 'boxes');
-    if (this.app.setting.activeTabValue.id === 'community-plugins') {
+    if (this.app.setting.lastTabId === 'community-plugins') {
       this.registerDomEvent(configList, 'click', () => {
         this.createComPluginsConfigList();
       });
@@ -408,6 +433,10 @@ export default class SettingsOptionsManagement extends Plugin {
       configItemButton.setIcon('puzzle');
       configItemButton.setTooltip(this.settings.enabledpluginsgroup[i].name);
       configItemButton.onClick(() => {
+        // const loader = debounce(() => {
+        //   this.loadComPluginsConfig(this.settings.enabledpluginsgroup[i]);
+        // });
+        // loader();
         this.loadComPluginsConfig(this.settings.enabledpluginsgroup[i]);
         this.configListEl && this.configListEl.remove();
         this.configListEl = null;
@@ -464,36 +493,17 @@ export default class SettingsOptionsManagement extends Plugin {
     getNameModal.open();
   }
 
-  loadComPluginsConfig(config: EnabledPlugins): void {
-    const pluginsListEl = this.app.setting.activeTabValue.installedPluginsEl.childNodes;
-    for (let i = 0; i < pluginsListEl.length; i++) {
-      const pluginEl = pluginsListEl[i] as HTMLElement;
-      const pluginName = pluginEl.querySelector('.setting-item-name')?.textContent;
-      if (!pluginName) { continue; }
-      const pluginDescription = pluginEl.querySelector('.setting-item-description')?.lastChild?.textContent || '';
-      const pluginId = this.nameToId(pluginName, pluginDescription);
-      if (pluginId && config.enabledplugins.includes(pluginId)) {
-        const pluginToggleButton = pluginEl.querySelector('.checkbox-container') as HTMLElement;
-        if (pluginToggleButton && !pluginToggleButton.classList.contains('is-enabled')) {
-          pluginToggleButton.click();
-        }
+  async loadComPluginsConfig(config: EnabledPlugins) {
+    const plugins = this.app.plugins;
+    console.log(111, Object.keys(plugins.manifests));
+    // let loader;
+    Object.keys(plugins.manifests).forEach((pluginid) => {
+      if (config.enabledplugins.includes(pluginid)) {
+        (() => { plugins.enablePluginAndSave(pluginid); })();
+      } else if (!config.enabledplugins.includes(pluginid)) {
+        (() => { plugins.disablePluginAndSave(pluginid); })();
       }
-      else if (pluginId && !config.enabledplugins.includes(pluginId)) {
-        const pluginToggleButton = pluginEl.querySelector('.checkbox-container') as HTMLElement;
-        if (pluginToggleButton && pluginToggleButton.classList.contains('is-enabled')) {
-          pluginToggleButton.click();
-        }
-      }
-      else {
-        console.log(`Can't find plugin: ${pluginName}`);
-      }
-    }
-  }
-
-  nameToId(name: string, description: string): string {
-    return Object.keys(this.app.plugins.manifests).find(key =>
-    (this.app.plugins.manifests[key].name === name &&
-      this.app.plugins.manifests[key].description === description)) || '';
+    });
   }
 
   saveCommunityPluginsConfig(): void {
