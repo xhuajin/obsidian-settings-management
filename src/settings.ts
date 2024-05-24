@@ -1,7 +1,7 @@
 import { App, PluginSettingTab } from "obsidian";
 import { EnabledCssSnippets, EnabledPlugins } from "./types";
 
-import SettingsOptionsManagement from "./main";
+import SettingsManagement from "./main";
 
 export interface SettingsOptionsManagementSettings {
   enabledpluginsgroup: EnabledPlugins[];
@@ -16,9 +16,9 @@ export const DEFAULT_SETTINGS: SettingsOptionsManagementSettings = {
 }
 
 export class SettingOptionsManagementSettingTab extends PluginSettingTab {
-  plugin: SettingsOptionsManagement;
+  plugin: SettingsManagement;
   
-  constructor(app: App, plugin: SettingsOptionsManagement) {
+  constructor(app: App, plugin: SettingsManagement) {
     super(app, plugin);
     this.plugin = plugin;
   }

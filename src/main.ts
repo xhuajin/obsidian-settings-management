@@ -1,37 +1,32 @@
-import { ButtonComponent, Menu, Modal, Notice, Platform, Plugin, Setting, addIcon, setIcon } from 'obsidian';
-import { DEFAULT_SETTINGS, SettingsOptionsManagementSettings } from './settings';
+import { ButtonComponent, Menu, Modal, Notice, Platform, Plugin, Setting, SettingTab, addIcon, setIcon } from 'obsidian';
+import { DEFAULT_SETTINGS, SettingsOptionsManagementSettings as SettingsManagementSettings } from './settings';
 import { EnabledCssSnippets, EnabledPlugins } from './types';
 
 declare module "obsidian" {
   interface App {
     setting: AppSetting;
-    activeTabValue: AppActiveTab;
-    settingTabs: AppSettingTab[];
-    tabContentContainer: HTMLElement;
     plugins: PluginsConfig;
     isMobile: boolean;
   }
-  interface AppActiveTab {
-    app: App;
-    id: string;
-    name: string;
-    installedPluginsEl: HTMLElement;
-  }
-  interface AppSettingTab {
-    id: string;
-    name: string;
-    containerEl: HTMLElement;
-    navEl: HTMLElement;
-  }
+  // this.app.setting
   interface AppSetting {
-    activeTabValue: AppActiveTab;
-    settingTabs: AppSettingTab[];
+    activeTab: SettingTab;
+    settingTabs: SettingTab[];
     tabContentContainer: HTMLElement;
     lastTabId: string;
     onOpen(): void;
     openTabById(id: string): boolean;
-    openTab(tab: AppSettingTab): void;
+    openTab(tab: SettingTab): void;
   }
+  
+  interface SettingTab {
+    id: string;
+    name: string;
+    containerEl: HTMLElement;
+    navEl: HTMLElement;
+    installedPluginsEl?: HTMLElement;
+  }
+  // this.app.plugins
   interface PluginsConfig {
     manifests: {
       [key: string]: PluginManifest;
@@ -46,11 +41,13 @@ declare module "obsidian" {
   }
 }
 
-export default class SettingsOptionsManagement extends Plugin {
-  settings: SettingsOptionsManagementSettings;
+export default class SettingsManagement extends Plugin {
+  settings: SettingsManagementSettings;
+  settingTabs: SettingTab[];
+  settingstabId: string[];
+  optionsId: string[];
+  activeTab: SettingTab;
   optionsmenuEl: HTMLElement | null;
-  optionsid: string[];
-  currentActiveTab: string;
   configListEl: HTMLElement | null;
 
   async onload() {
@@ -62,8 +59,8 @@ export default class SettingsOptionsManagement extends Plugin {
     await this.saveSettings();
     // this.addSettingTab(new PluginsManagementSettingTab(this.app, this)); // Haven't use settingTab temporarily.
 
-    this.optionsid = ['appearance', 'hotkeys', 'plugins', 'community-plugins'];
-    this.currentActiveTab = '';
+    this.settingstabId = this.app.setting.settingTabs.map(tab => tab.id);
+    this.optionsId = ['appearance', 'hotkeys', 'plugins', 'community-plugins'];
     this.optionsmenuEl = null;
 
     // add new svg icons: toggle-center which is not available in lucide. It's a toggle icon but the circle is in the middle of the rect.
@@ -85,18 +82,18 @@ export default class SettingsOptionsManagement extends Plugin {
   }
 
   async createSettingsOptionsMenu() {
-    if (this.optionsid && this.app.setting.activeTabValue && this.optionsid.includes(this.app.setting.activeTabValue.id)) {
-      this.createMenu(this.app.setting.activeTabValue.id);
+    this.activeTab = this.app.setting.activeTab;
+    if (this.activeTab && this.optionsId.includes(this.app.setting.activeTab.id)) {
+      this.createMenu(this.app.setting.activeTab.id);
     }
-
+    
     const setting = this.app.setting;
     setting.onOpen = () => {
       setting.openTabById(setting.lastTabId) || setting.openTab(setting.settingTabs[0])
-      if (this.optionsid && this.optionsid.includes(setting.lastTabId)) {
-        this.createMenu(setting.lastTabId);
-      }
+      this.activeTab = setting.activeTab;
+      this.createMenu(this.activeTab.id);
     }
-
+    
     // 监听每个 tab 是否被点击
     setting.settingTabs.forEach(async (tab) => {
       this.registerDomEvent(tab.navEl, 'click', () => {
@@ -104,23 +101,11 @@ export default class SettingsOptionsManagement extends Plugin {
         this.createMenu(tab.id);
       });
     });
-
-    // Object.defineProperty(this.app.setting, 'activeTab', {
-    //   get() {
-    //     return this.app.setting.activeTabValue;
-    //   },
-    //   set: (value) => {
-    //     this.app.setting.activeTabValue = value;
-    //     if (value) {
-    //       this.createMenu(value.id);
-    //     }
-    //   }
-    // });
   }
 
   createMenu(id: string): void {
     this.deleteMenu();
-    if (this.optionsid && this.optionsid.includes(id)) {
+    if (this.optionsId.includes(id)) {
       this.createSwitcher();
       this.createGridStyle();
       if (id === 'appearance' || id === 'community-plugins') {
@@ -162,7 +147,7 @@ export default class SettingsOptionsManagement extends Plugin {
       switcherButton.setIcon('toggle-center');
       switcherButton.setTooltip('All');
     }
-
+    
     switcherButton.onClick(() => {
       if (document.body.classList.contains('pm-show-enabled')) {
         document.body.classList.remove('pm-show-enabled');
@@ -219,6 +204,7 @@ export default class SettingsOptionsManagement extends Plugin {
     if (!this.optionsmenuEl) {
       return;
     }
+    
     // 保存按钮
     const saveEl = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'save' } });
     const saveButton = new ButtonComponent(saveEl);
@@ -231,8 +217,8 @@ export default class SettingsOptionsManagement extends Plugin {
   }
 
   saveCurrentConfig(): void {
-    const activeTab = this.app.setting.activeTabValue;
-    switch (activeTab.id) {
+    const activeTab = this.app.setting.lastTabId;
+    switch (activeTab) {
       case 'appearance':
         this.saveCssSnippetsConfig();
         break;
@@ -412,9 +398,7 @@ export default class SettingsOptionsManagement extends Plugin {
 
   /* community plugins */
   createComPluginsConfigList(): void {
-    if (!this.optionsmenuEl) {
-      return;
-    }
+    if (!this.optionsmenuEl) { return; }
     if (this.settings.enabledpluginsgroup.length === 0) {
       new Notice('No saved configuration');
       return;
@@ -432,14 +416,11 @@ export default class SettingsOptionsManagement extends Plugin {
       const configItemButton = new ButtonComponent(configItemEl);
       configItemButton.setIcon('puzzle');
       configItemButton.setTooltip(this.settings.enabledpluginsgroup[i].name);
-      configItemButton.onClick(() => {
-        // const loader = debounce(() => {
-        //   this.loadComPluginsConfig(this.settings.enabledpluginsgroup[i]);
-        // });
-        // loader();
+      configItemButton.onClick(async () => {
         this.loadComPluginsConfig(this.settings.enabledpluginsgroup[i]);
         this.configListEl && this.configListEl.remove();
         this.configListEl = null;
+        // await settingtabs[6].display(); // 性能问题，快速切换配置时会无法显示，因此不使用 disaplay() 刷新页面。
       });
       this.registerDomEvent(configItemEl, 'contextmenu', (event) => {
         event.preventDefault();
@@ -450,6 +431,10 @@ export default class SettingsOptionsManagement extends Plugin {
             this.settings.enabledpluginsgroup.splice(i, 1);
             this.saveSettings();
             configItemEl.remove();
+            if (this.configListEl && this.configListEl.children.length === 1) {
+              this.configListEl.remove();
+              this.configListEl = null;
+            }
           });
         });
         menu.addItem(item => {
@@ -493,17 +478,48 @@ export default class SettingsOptionsManagement extends Plugin {
     getNameModal.open();
   }
 
-  async loadComPluginsConfig(config: EnabledPlugins) {
-    const plugins = this.app.plugins;
-    console.log(111, Object.keys(plugins.manifests));
-    // let loader;
-    Object.keys(plugins.manifests).forEach((pluginid) => {
-      if (config.enabledplugins.includes(pluginid)) {
-        (() => { plugins.enablePluginAndSave(pluginid); })();
-      } else if (!config.enabledplugins.includes(pluginid)) {
-        (() => { plugins.disablePluginAndSave(pluginid); })();
+  loadComPluginsConfig(config: EnabledPlugins): void {
+    if (!this.app.setting.settingTabs[6].installedPluginsEl) { return; }
+    const pluginsListEl = this.app.setting.settingTabs[6].installedPluginsEl.childNodes;
+    for (let i = 0; i < pluginsListEl.length; i++) {
+      const pluginEl = pluginsListEl[i] as HTMLElement;
+      const pluginName = pluginEl.querySelector('.setting-item-name')?.textContent;
+      if (!pluginName) { continue; }
+      const pluginDescription = pluginEl.querySelector('.setting-item-description')?.lastChild?.textContent || '';
+      const pluginId = this.nameToId(pluginName, pluginDescription);
+      if (pluginId && config.enabledplugins.includes(pluginId)) {
+        const pluginToggleButton = pluginEl.querySelector('.checkbox-container') as HTMLElement;
+        if (pluginToggleButton && !pluginToggleButton.classList.contains('is-enabled')) {
+          pluginToggleButton.click();
+        }
       }
-    });
+      else if (pluginId && !config.enabledplugins.includes(pluginId)) {
+        const pluginToggleButton = pluginEl.querySelector('.checkbox-container') as HTMLElement;
+        if (pluginToggleButton && pluginToggleButton.classList.contains('is-enabled')) {
+          pluginToggleButton.click();
+        }
+      }
+      else {
+        console.log(`Can't find plugin: ${pluginName}`);
+      }
+    }
+    // (() => { plugins.enablePluginAndSave(pluginid); })();  settingtabs[6].display(); are abandoned because of performance issues
+    // const plugins = this.app.plugins;
+    // // console.log('config', config);
+    // // let loader;
+    // Object.keys(plugins.manifests).forEach((pluginid) => {
+    //   if (config.enabledplugins.includes(pluginid)) {
+    //     (() => { plugins.enablePluginAndSave(pluginid); })();
+    //   } else if (!config.enabledplugins.includes(pluginid)) {
+    //     (() => { plugins.disablePluginAndSave(pluginid); })();
+    //   }
+    // });
+  }
+
+  nameToId(name: string, description: string): string {
+    return Object.keys(this.app.plugins.manifests).find(key =>
+    (this.app.plugins.manifests[key].name === name &&
+      this.app.plugins.manifests[key].description === description)) || '';
   }
 
   saveCommunityPluginsConfig(): void {
