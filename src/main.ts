@@ -6,7 +6,6 @@ declare module "obsidian" {
   interface App {
     setting: AppSetting;
     plugins: PluginsConfig;
-    isMobile: boolean;
   }
   // this.app.setting
   interface AppSetting {
