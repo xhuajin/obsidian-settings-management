@@ -51,10 +51,6 @@ export default class SettingsManagement extends Plugin {
   configListEl: HTMLElement | null;
 
   async onload() {
-    if (Platform.isMobileApp || this.app.isMobile) {
-      console.log(`Settings Management is useless on mobile`);
-      return;
-    }
     await this.loadSettings();
     await this.saveSettings();
     // this.addSettingTab(new PluginsManagementSettingTab(this.app, this)); // Haven't use settingTab temporarily.
