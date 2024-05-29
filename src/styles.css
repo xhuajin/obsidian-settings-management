@@ -34,6 +34,7 @@ body .pm-tabs .pm-tab button {
   padding: 0;
   height: 17px;
   box-shadow: none;
+  background-color: transparent;
 }
 
 body .pm-tabs > .pm-configs {
@@ -73,7 +74,7 @@ body .installed-plugins-container {
 }
 
 body .installed-plugins-container .setting-item:first-child {
-  padding: 0.75em 0;
+  padding: 0.75em;
   border-top: 1px solid var(--background-modifier-border);
 }
 
@@ -93,28 +94,28 @@ body.pm-show-disabled .installed-plugins-container .setting-item.mod-toggle:has(
   display: none !important;
 }
 /* 两列布局 */
-body.pm-grid .vertical-tabs-container .vertical-tab-content:not(:is(:has(> div:not(.setting-item)), :has(.hotkey-list-container))),
-body.pm-grid .vertical-tabs-container .vertical-tab-content > .hotkey-list-container,
-body.pm-grid .plugin-list-plugins > div:not(.setting-item),
-body.pm-grid .installed-plugins-container {
+.vertical-tabs-container .pm-grid.vertical-tab-content:not(:is(:has(> div:not(.setting-item)), :has(.hotkey-list-container))),
+.vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container,
+.vertical-tabs-container .pm-grid .plugin-list-plugins > div:not(.setting-item),
+.vertical-tabs-container .pm-grid .installed-plugins-container {
   display: grid;
   gap: 15px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
-body.pm-grid .vertical-tabs-container .vertical-tab-content:not(:has(> .hotkey-list-container)) > .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading),
-body.pm-grid .vertical-tabs-container .vertical-tab-content > .hotkey-list-container > .setting-item,
-body.pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle,
-body.pm-grid .installed-plugins-container .setting-item {
+.vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) > .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading),
+.vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container > .setting-item,
+.vertical-tabs-container .pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle,
+.vertical-tabs-container .pm-grid .installed-plugins-container .setting-item {
   border: 1px solid var(--background-modifier-border);
   border-radius: 8px;
   padding: 1em;
 }
 
-body.pm-grid .vertical-tabs-container .vertical-tab-content > .setting-item:is(:has(~.setting-item-heading), .setting-item-heading)
+.vertical-tabs-container .pm-grid.vertical-tab-content > .setting-item:is(:has(~.setting-item-heading), .setting-item-heading)
 {
   grid-column: 1 / -1;
 }
-body.pm-grid .plugin-list-plugins div.setting-item.setting-item-heading {
+.vertical-tabs-container .pm-grid .plugin-list-plugins div.setting-item.setting-item-heading {
   grid-column: 1 / -1;
 }
 

@@ -62,7 +62,7 @@ export default class SettingsManagement extends Plugin {
     this.addNewSvgIcons();
     await this.createSettingsOptionsMenu();
   }
-
+  
   onunload() {
     this.deleteMenu();
     this.saveSettings();
@@ -116,7 +116,8 @@ export default class SettingsManagement extends Plugin {
       this.optionsmenuEl = null;
       document.body.classList.remove('pm-show-enabled');
       document.body.classList.remove('pm-show-disabled');
-      document.body.classList.remove('pm-grid');
+      // document.body.classList.remove('pm-grid');
+      this.app.setting.activeTab.containerEl.classList.remove('pm-grid');
     }
   }
 
@@ -170,23 +171,27 @@ export default class SettingsManagement extends Plugin {
     const gridStyleEl = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'grid' } });
     const gridStyleButton = new ButtonComponent(gridStyleEl);
     if (this.settings.pluginsgridtype === 'grid') {
-      document.body.classList.add('pm-grid');
+      // document.body.classList.add('pm-grid');
+      this.app.setting.activeTab.containerEl.classList.add('pm-grid');
       gridStyleButton.setIcon('layout-grid');
       gridStyleButton.setTooltip('Grid layout');
     } else {
-      document.body.classList.remove('pm-grid');
+      // document.body.classList.remove('pm-grid');
+      this.app.setting.activeTab.containerEl.classList.remove('pm-grid');
       gridStyleButton.setIcon('menu');
       gridStyleButton.setTooltip('List layout');
     }
 
     gridStyleButton.onClick(async () => {
       if (this.settings.pluginsgridtype === 'grid') {
-        document.body.classList.remove('pm-grid');
+        // document.body.classList.remove('pm-grid');
+        this.app.setting.activeTab.containerEl.classList.remove('pm-grid');
         gridStyleButton.setIcon('menu');
         gridStyleButton.setTooltip('List layout');
         this.settings.pluginsgridtype = 'list';
       } else {
-        document.body.classList.add('pm-grid');
+        // document.body.classList.add('pm-grid');
+        this.app.setting.activeTab.containerEl.classList.add('pm-grid');
         gridStyleButton.setIcon('layout-grid');
         gridStyleButton.setTooltip('Grid layout');
         this.settings.pluginsgridtype = 'grid';
