@@ -17,7 +17,7 @@ declare module "obsidian" {
     openTabById(id: string): boolean;
     openTab(tab: SettingTab): void;
   }
-  
+
   interface SettingTab {
     id: string;
     name: string;
@@ -62,7 +62,7 @@ export default class SettingsManagement extends Plugin {
     this.addNewSvgIcons();
     await this.createSettingsOptionsMenu();
   }
-  
+
   onunload() {
     this.deleteMenu();
     this.saveSettings();
@@ -81,14 +81,14 @@ export default class SettingsManagement extends Plugin {
     if (this.activeTab && this.optionsId.includes(this.app.setting.activeTab.id)) {
       this.createMenu(this.app.setting.activeTab.id);
     }
-    
+
     const setting = this.app.setting;
     setting.onOpen = () => {
       setting.openTabById(setting.lastTabId) || setting.openTab(setting.settingTabs[0])
       this.activeTab = setting.activeTab;
       this.createMenu(this.activeTab.id);
     }
-    
+
     // 监听每个 tab 是否被点击
     setting.settingTabs.forEach(async (tab) => {
       this.registerDomEvent(tab.navEl, 'click', () => {
@@ -143,7 +143,7 @@ export default class SettingsManagement extends Plugin {
       switcherButton.setIcon('toggle-center');
       switcherButton.setTooltip('All');
     }
-    
+
     switcherButton.onClick(() => {
       if (document.body.classList.contains('pm-show-enabled')) {
         document.body.classList.remove('pm-show-enabled');
@@ -204,7 +204,7 @@ export default class SettingsManagement extends Plugin {
     if (!this.optionsmenuEl) {
       return;
     }
-    
+
     // 保存按钮
     const saveEl = this.optionsmenuEl.createEl('div', { attr: { class: 'pm-tab', value: 'save' } });
     const saveButton = new ButtonComponent(saveEl);
@@ -287,7 +287,7 @@ export default class SettingsManagement extends Plugin {
           });
         });
         menu.addItem(item => {
-          item.setTitle('Rename').setIcon('pencil');
+          item.setTitle('Modify').setIcon('pencil');
           item.onClick(() => {
             this.renameCssSnippetsConfig(i);
           });
@@ -414,8 +414,8 @@ export default class SettingsManagement extends Plugin {
     for (let i = 0; i < this.settings.enabledpluginsgroup.length; i++) {
       const configItemEl = this.configListEl.createEl('div', { attr: { class: 'pm-tab pm-config', value: this.settings.enabledpluginsgroup[i].id } });
       const configItemButton = new ButtonComponent(configItemEl);
-      configItemButton.setIcon('puzzle');
       configItemButton.setTooltip(this.settings.enabledpluginsgroup[i].name);
+      configItemButton.setIcon(this.settings.enabledpluginsgroup[i].icon);
       configItemButton.onClick(async () => {
         this.loadComPluginsConfig(this.settings.enabledpluginsgroup[i]);
         this.configListEl && this.configListEl.remove();
@@ -438,9 +438,9 @@ export default class SettingsManagement extends Plugin {
           });
         });
         menu.addItem(item => {
-          item.setTitle('Rename').setIcon('pencil');
+          item.setTitle('Modify').setIcon('pencil');
           item.onClick(() => {
-            this.renameComPluginsConfig(i);
+            this.modifyComPluginsConfig(i);
           });
         });
         menu.showAtMouseEvent(event);
@@ -448,8 +448,8 @@ export default class SettingsManagement extends Plugin {
     }
   }
 
-  renameComPluginsConfig(index: number): void {
-    const getNameModal = new Modal(this.app).setTitle('Rename plugins config');
+  modifyComPluginsConfig(index: number): void {
+    const getNameModal = new Modal(this.app).setTitle('Modify plugins config');
     getNameModal.onOpen = () => {
       let configName = ''
       new Setting(getNameModal.contentEl)
@@ -468,11 +468,59 @@ export default class SettingsManagement extends Plugin {
               return;
             } else {
               this.settings.enabledpluginsgroup[index].name = configName;
+              this.settings.enabledpluginsgroup[index].icontype = icontype;
+              this.settings.enabledpluginsgroup[index].icon = icon;
               this.saveSettings();
               getNameModal.close();
             }
           })
+        );
+      
+      let icontype = this.settings.enabledpluginsgroup[index].icontype;
+      let icon = this.settings.enabledpluginsgroup[index].icon;
+      const iconSetting = new Setting(getNameModal.contentEl)
+        .setName('Config icon')
+        .setDesc('Accepts lucide icon.(Click the icon to refresh. Svg icon in the future.)');
+
+      // iconSetting.addDropdown(dropdown => dropdown
+      //   .addOptions({
+      //     'lucide': 'Lucide',
+      //     'svg': 'SVG'
+      //   })
+      //   .setValue(this.settings.enabledpluginsgroup[index].icontype)
+      //   .onChange((value) => {
+      //     if (value !== icontype) {
+      //       icontype = value;
+      //       if (!iconnameEl) { return; }
+      //       iconnameEl.value = value === 'lucide' ? 'puzzle' : '';
+      //       setIcon(previewIcon, 'refresh-cw');
+      //     }
+      //   }))
+      let iconnameEl: HTMLInputElement;
+      iconSetting
+        .addText(text => {
+            text
+              .setValue(this.settings.enabledpluginsgroup[index].icon)
+              .onChange((value) => {
+                icon = value;
+                setIcon(previewIcon, 'refresh-cw');
+              })
+            iconnameEl = text.inputEl;
+          }
         )
+      
+      const previewIcon = iconSetting.controlEl.createDiv({ attr: { class: 'pm-preview-icon' } });
+      setIcon(previewIcon, this.settings.enabledpluginsgroup[index].icon);
+      
+      this.registerDomEvent(previewIcon, 'click', () => {
+        if (icontype === 'lucide') {
+          setIcon(previewIcon, icon);
+        } else if (icontype === 'svg') {
+          addIcon('newconfigicon', icon)
+          setIcon(previewIcon, icon);
+        }
+      });
+
       getNameModal.contentEl.find('input').focus();
     }
     getNameModal.open();
@@ -503,17 +551,6 @@ export default class SettingsManagement extends Plugin {
         console.log(`Can't find plugin: ${pluginName}`);
       }
     }
-    // (() => { plugins.enablePluginAndSave(pluginid); })();  settingtabs[6].display(); are abandoned because of performance issues
-    // const plugins = this.app.plugins;
-    // // console.log('config', config);
-    // // let loader;
-    // Object.keys(plugins.manifests).forEach((pluginid) => {
-    //   if (config.enabledplugins.includes(pluginid)) {
-    //     (() => { plugins.enablePluginAndSave(pluginid); })();
-    //   } else if (!config.enabledplugins.includes(pluginid)) {
-    //     (() => { plugins.disablePluginAndSave(pluginid); })();
-    //   }
-    // });
   }
 
   nameToId(name: string, description: string): string {
@@ -531,8 +568,8 @@ export default class SettingsManagement extends Plugin {
         .addText(text => text
           .onChange((value) => {
             configName = value;
-          }
-          ))
+          })
+        )
         .addButton(button => button
           .setButtonText('Save')
           .onClick(() => {
@@ -540,21 +577,67 @@ export default class SettingsManagement extends Plugin {
               new Notice('Config name is empty.');
               return;
             } else {
-              this.settings.enabledpluginsgroup.push(this.createCurComPluginsConfig(this.app.plugins.enabledPlugins, configName));
+              this.settings.enabledpluginsgroup.push(this.createCurComPluginsConfig(this.app.plugins.enabledPlugins, configName, icontype, icon));
               this.saveSettings();
               getNameModal.close();
             }
           })
         )
+      
+      let icontype = 'lucide';
+      let icon = 'puzzle';
+      const iconSetting = new Setting(getNameModal.contentEl)
+        .setName('Config icon')
+        .setDesc('Accepts lucide icon.(Click the icon to refresh. Svg icon in the future.)');
+
+      // iconSetting.addDropdown(dropdown => dropdown
+      //   .addOptions({
+      //     'lucide': 'Lucide',
+      //     'svg': 'SVG'
+      //   })
+      //   .setValue(icontype)
+      //   .onChange((value) => {
+      //     if (value !== icontype) {
+      //       icontype = value;
+      //       if (!iconnameEl) { return; }
+      //       iconnameEl.value = value === 'lucide' ? 'puzzle' : '';
+      //       setIcon(previewIcon, 'refresh-cw');
+      //     }
+      //   }))
+      let iconnameEl: HTMLInputElement;
+      iconSetting
+        .addText(text => {
+            text.setValue(icon).onChange((value) => {
+              icon = value;
+              setIcon(previewIcon, 'refresh-cw');
+            })
+            iconnameEl = text.inputEl;
+          }
+        )
+      
+      const previewIcon = iconSetting.controlEl.createDiv({ attr: { class: 'pm-preview-icon' } });
+      setIcon(previewIcon, 'puzzle');
+      this.registerDomEvent(previewIcon, 'click', () => {
+        if (icontype === 'lucide') {
+          setIcon(previewIcon, icon);
+        } else if (icontype === 'svg') {
+          addIcon('newconfigicon', icon)
+          setIcon(previewIcon, icon);
+        }
+      });
+
+      
       getNameModal.contentEl.find('input').focus();
     }
     getNameModal.open();
   }
 
-  createCurComPluginsConfig(enabledPlugins: Set<string>, name: string): EnabledPlugins {
+  createCurComPluginsConfig(enabledPlugins: Set<string>, name: string, icontype: string, icon: string): EnabledPlugins {
     return {
       id: Date.now().toString(10),
       name: name,
+      icontype: icontype,
+      icon: icon,
       enabledplugins: Array.from(enabledPlugins)
     }
   }

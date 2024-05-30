@@ -26,3 +26,7 @@ Save current config and enabled it.
 Right click the config can open a menu to delete or rename the config.
 
 ![Delete/Rename-Config](./images/deleteAndRenameConfig.png)
+
+Support use lucide icon as custom config icon. (https://lucide.dev/)
+
+![iconSetting](./images/iconSetting.png)

@@ -111,6 +111,14 @@ body.pm-show-disabled .installed-plugins-container .setting-item.mod-toggle:has(
   padding: 1em;
 }
 
+.vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) > .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading) > .setting-item-info,
+.vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container > .setting-item > .setting-item-info,
+.vertical-tabs-container .pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle > .setting-item-info,
+.vertical-tabs-container .pm-grid .installed-plugins-container .setting-item > .setting-item-info {
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+
 .vertical-tabs-container .pm-grid.vertical-tab-content > .setting-item:is(:has(~.setting-item-heading), .setting-item-heading)
 {
   grid-column: 1 / -1;
@@ -126,4 +134,11 @@ body .modal .modal-content.pm-config-model {
 body .modal .modal-content.pm-config-model #pm-config-input {
   width: 100%;
   margin: 0 15%;
+}
+
+/* icon */
+
+.modal .pm-preview-icon {
+  display: flex;
+  cursor: pointer;
 }
