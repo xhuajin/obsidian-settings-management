@@ -1,144 +1,184 @@
 body .pm-tabs {
-  position: absolute;
-  display: flex;
-  flex-direction: column;
-  right: 17px;
-  bottom: 10px;
-  padding: 3px;
-  border: 2px solid var(--divider-color);
-  border-radius: 8px;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--background-primary);
+	position: absolute;
+	display: flex;
+	flex-direction: column;
+	right: 17px;
+	bottom: 10px;
+	padding: 3px;
+	border: 2px solid var(--divider-color);
+	border-radius: 8px;
+	justify-content: space-between;
+	align-items: center;
+	background-color: var(--background-primary);
 }
 
 body .pm-tabs .pm-tab {
-  position: relative;
-  display: flex;
-  width: auto;
-  padding: 4px;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  cursor: pointer;
-  box-shadow: none;
-  transition: all 0.2s;
+	position: relative;
+	display: flex;
+	width: auto;
+	padding: 4px;
+	margin-top: 2px;
+	margin-bottom: 2px;
+	cursor: pointer;
+	box-shadow: none;
+	transition: all 0.2s;
 }
 
 body .pm-tabs .pm-tab:hover {
-  background-color: var(--interactive-hover);
-  box-shadow: var(--input-shadow-hover);
-  border-radius: 6px;
+	background-color: var(--interactive-hover);
+	box-shadow: var(--input-shadow-hover);
+	border-radius: 6px;
 }
 
 body .pm-tabs .pm-tab button {
-  padding: 0;
-  height: 17px;
-  box-shadow: none;
-  background-color: transparent;
+	padding: 0;
+	height: 17px;
+	box-shadow: none;
+	background-color: transparent;
 }
 
 body .pm-tabs > .pm-configs {
-  display: flex;
-  position: absolute;
-  margin: 0;
-  border: 2px solid var(--divider-color);
-  border-radius: 8px;
-  padding: 0;
-  right: -1px;
-  bottom: -2px;
-  flex-direction: row-reverse;
-  background-color: var(--background-primary);
-  border-bottom-right-radius: 8px;
-  z-index: 1;
-  
+	display: flex;
+	position: absolute;
+	margin: 0;
+	border: 2px solid var(--divider-color);
+	border-radius: 8px;
+	padding: 0;
+	right: -1px;
+	bottom: -2px;
+	flex-direction: row-reverse;
+	background-color: var(--background-primary);
+	border-bottom-right-radius: 8px;
+	z-index: 1;
 }
 
 body .pm-tabs > .pm-configs > .pm-tab.pm-config {
-  margin: 2px;
+	margin: 2px;
 }
 
 body .pm-tabs > .pm-configs > .pm-tab.pm-config:last-child {
-  margin-left: 6px;
+	margin-left: 6px;
 }
 
 body .pm-tabs > .pm-configs > .pm-tab.pm-config button {
-  padding: 0;
-  height: 17px;
-  box-shadow: none;
-  background: transparent;
+	padding: 0;
+	height: 17px;
+	box-shadow: none;
+	background: transparent;
 }
 
 body .installed-plugins-container {
-  border-top: unset;
-  padding-top: 0;
+	border-top: unset;
+	padding-top: 0;
 }
 
 body .installed-plugins-container .setting-item:first-child {
-  padding: 0.75em;
-  border-top: 1px solid var(--background-modifier-border);
+	padding: 0.75em 0;
+	border-top: 1px solid var(--background-modifier-border);
 }
-
 
 /* 隐藏未启用选项 */
-body.pm-show-enabled .setting-item.setting-item-heading:has(.clickable-icon) ~ .setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)),
-body.pm-show-enabled .vertical-tab-content-container > .vertical-tab-content > .hotkey-list-container > .setting-item:has(.setting-hotkey.mod-empty),
-body.pm-show-enabled .plugin-list-plugins > div > div.setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)),
-body.pm-show-enabled .installed-plugins-container .setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)) {
-  display: none !important;
+body.pm-show-enabled
+	.setting-item.setting-item-heading:has(.clickable-icon)
+	~ .setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)),
+body.pm-show-enabled
+	.vertical-tab-content-container
+	> .vertical-tab-content
+	> .hotkey-list-container
+	> .setting-item:has(.setting-hotkey.mod-empty),
+body.pm-show-enabled
+	.plugin-list-plugins
+	> div
+	> div.setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)),
+body.pm-show-enabled
+	.installed-plugins-container
+	.setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)) {
+	display: none !important;
 }
 /* 隐藏启用选项 */
-body.pm-show-disabled .setting-item.setting-item-heading:has(.clickable-icon) ~ .setting-item.mod-toggle:has(.checkbox-container.is-enabled),
-body.pm-show-disabled .vertical-tab-content-container > .vertical-tab-content > .hotkey-list-container > .setting-item:not(:has(.setting-hotkey.mod-empty)),
-body.pm-show-disabled .plugin-list-plugins > div > div.setting-item.mod-toggle:has(.checkbox-container.is-enabled),
-body.pm-show-disabled .installed-plugins-container .setting-item.mod-toggle:has(.checkbox-container.is-enabled) {
-  display: none !important;
+body.pm-show-disabled
+	.setting-item.setting-item-heading:has(.clickable-icon)
+	~ .setting-item.mod-toggle:has(.checkbox-container.is-enabled),
+body.pm-show-disabled
+	.vertical-tab-content-container
+	> .vertical-tab-content
+	> .hotkey-list-container
+	> .setting-item:not(:has(.setting-hotkey.mod-empty)),
+body.pm-show-disabled
+	.plugin-list-plugins
+	> div
+	> div.setting-item.mod-toggle:has(.checkbox-container.is-enabled),
+body.pm-show-disabled
+	.installed-plugins-container
+	.setting-item.mod-toggle:has(.checkbox-container.is-enabled) {
+	display: none !important;
 }
 /* 两列布局 */
-.vertical-tabs-container .pm-grid.vertical-tab-content:not(:is(:has(> div:not(.setting-item)), :has(.hotkey-list-container))),
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content:not(
+		:is(:has(> div:not(.setting-item)), :has(.hotkey-list-container))
+	),
 .vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container,
 .vertical-tabs-container .pm-grid .plugin-list-plugins > div:not(.setting-item),
 .vertical-tabs-container .pm-grid .installed-plugins-container {
-  display: grid;
-  gap: 15px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+	display: grid;
+	gap: 15px;
+	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
 .vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) > .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading),
 .vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container > .setting-item,
 .vertical-tabs-container .pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle,
 .vertical-tabs-container .pm-grid .installed-plugins-container .setting-item {
-  border: 1px solid var(--background-modifier-border);
-  border-radius: 8px;
-  padding: 1em;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 8px;
+	padding: 1em;
+
+  justify-content: center;
+	flex-direction: column;
 }
 
-.vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) > .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading) > .setting-item-info,
+.vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading) > .setting-item-info,
 .vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container > .setting-item > .setting-item-info,
 .vertical-tabs-container .pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle > .setting-item-info,
 .vertical-tabs-container .pm-grid .installed-plugins-container .setting-item > .setting-item-info {
-  overflow: hidden;
-  overflow-wrap: anywhere;
+  width: 100%;
+  margin: 0 var(--size-4-4) var(--size-4-4);
+	overflow: hidden;
+	overflow-wrap: anywhere;
 }
 
-.vertical-tabs-container .pm-grid.vertical-tab-content > .setting-item:is(:has(~.setting-item-heading), .setting-item-heading)
-{
-  grid-column: 1 / -1;
+.vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading) > .setting-item-control,
+.vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container > .setting-item > .setting-item-control,
+.vertical-tabs-container .pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle > .setting-item-control,
+.vertical-tabs-container .pm-grid .installed-plugins-container .setting-item > .setting-item-control {
+  margin-left: auto;
 }
-.vertical-tabs-container .pm-grid .plugin-list-plugins div.setting-item.setting-item-heading {
-  grid-column: 1 / -1;
+
+
+.vertical-tabs-container .pm-grid.vertical-tab-content > .setting-item:is(:has(~ .setting-item-heading), .setting-item-heading) {
+	grid-column: 1 / -1;
+}
+
+.vertical-tabs-container
+	.pm-grid
+	.plugin-list-plugins
+	div.setting-item.setting-item-heading {
+	grid-column: 1 / -1;
 }
 
 body .modal .modal-content.pm-config-model {
-  display: flex;
-  justify-content: space-between;
+	display: flex;
+	justify-content: space-between;
 }
+
 body .modal .modal-content.pm-config-model #pm-config-input {
-  width: 100%;
-  margin: 0 15%;
+	width: 100%;
+	margin: 0 15%;
 }
 
 /* icon */
 
 .modal .pm-preview-icon {
-  display: flex;
-  cursor: pointer;
+	display: flex;
+	cursor: pointer;
 }

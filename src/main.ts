@@ -1,4 +1,4 @@
-import { ButtonComponent, Menu, Modal, Notice, Platform, Plugin, Setting, SettingTab, addIcon, setIcon } from 'obsidian';
+import { ButtonComponent, Menu, Modal, Notice, Plugin, Setting, SettingTab, addIcon, setIcon } from 'obsidian';
 import { DEFAULT_SETTINGS, SettingsOptionsManagementSettings as SettingsManagementSettings } from './settings';
 import { EnabledCssSnippets, EnabledPlugins } from './types';
 
@@ -392,7 +392,9 @@ export default class SettingsManagement extends Plugin {
     return {
       id: Date.now().toString(10),
       name: configName,
-      enabledcsssnippets: snippets
+      enabledcsssnippets: snippets,
+      icontype: 'lucide',
+      icon: 'puzzle'
     };
   }
 
@@ -476,7 +478,7 @@ export default class SettingsManagement extends Plugin {
           })
         );
       
-      let icontype = this.settings.enabledpluginsgroup[index].icontype;
+      const icontype = this.settings.enabledpluginsgroup[index].icontype;
       let icon = this.settings.enabledpluginsgroup[index].icon;
       const iconSetting = new Setting(getNameModal.contentEl)
         .setName('Config icon')
@@ -584,7 +586,7 @@ export default class SettingsManagement extends Plugin {
           })
         )
       
-      let icontype = 'lucide';
+      const icontype = 'lucide';
       let icon = 'puzzle';
       const iconSetting = new Setting(getNameModal.contentEl)
         .setName('Config icon')
