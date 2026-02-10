@@ -79,17 +79,16 @@ body .installed-plugins-container .setting-item:first-child {
 
 /* 隐藏未启用选项 */
 body.pm-show-enabled
-	.setting-item.setting-item-heading:has(.clickable-icon)
-	~ .setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)),
+	.setting-group:nth-child(5)
+	.setting-items
+	> .setting-item:not(:has(.checkbox-container.is-enabled)),
 body.pm-show-enabled
-	.vertical-tab-content-container
-	> .vertical-tab-content
-	> .hotkey-list-container
-	> .setting-item:has(.setting-hotkey.mod-empty),
+	.hotkey-list-container
+	.setting-item:has(span.setting-hotkey.mod-empty),
 body.pm-show-enabled
-	.plugin-list-plugins
-	> div
-	> div.setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)),
+	.setting-group-search
+	+ .setting-items
+	> .setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)),
 body.pm-show-enabled
 	.installed-plugins-container
 	.setting-item.mod-toggle:not(:has(.checkbox-container.is-enabled)) {
@@ -97,65 +96,115 @@ body.pm-show-enabled
 }
 /* 隐藏启用选项 */
 body.pm-show-disabled
-	.setting-item.setting-item-heading:has(.clickable-icon)
-	~ .setting-item.mod-toggle:has(.checkbox-container.is-enabled),
+	.setting-group:nth-child(5)
+	.setting-items
+	> .setting-item:has(.checkbox-container.is-enabled),
 body.pm-show-disabled
-	.vertical-tab-content-container
-	> .vertical-tab-content
-	> .hotkey-list-container
-	> .setting-item:not(:has(.setting-hotkey.mod-empty)),
+	.hotkey-list-container
+	.setting-item:not(:has(span.setting-hotkey.mod-empty)),
 body.pm-show-disabled
-	.plugin-list-plugins
-	> div
-	> div.setting-item.mod-toggle:has(.checkbox-container.is-enabled),
+	.setting-group-search
+	+ .setting-items
+	> .setting-item:has(.checkbox-container.is-enabled),
 body.pm-show-disabled
 	.installed-plugins-container
-	.setting-item.mod-toggle:has(.checkbox-container.is-enabled) {
+	.setting-item
+	.setting-item-control:has(.checkbox-container.is-enabled) {
 	display: none !important;
 }
 /* 两列布局 */
-.vertical-tabs-container
-	.pm-grid.vertical-tab-content:not(
-		:is(:has(> div:not(.setting-item)), :has(.hotkey-list-container))
-	),
-.vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container,
-.vertical-tabs-container .pm-grid .plugin-list-plugins > div:not(.setting-item),
-.vertical-tabs-container .pm-grid .installed-plugins-container {
+.vertical-tabs-container .pm-grid.vertical-tab-content .setting-group:nth-child(5) .setting-items,
+.vertical-tabs-container .pm-grid.vertical-tab-content .hotkey-list-container,
+.vertical-tabs-container .pm-grid.vertical-tab-content .setting-group > .setting-group-search + .setting-items,
+/* .vertical-tabs-container .pm-grid .plugin-list-plugins > div:not(.setting-item), */
+.vertical-tabs-container .pm-grid .installed-plugins-container > .setting-items {
 	display: grid;
 	gap: 15px;
 	grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
 }
-.vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) > .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading),
-.vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container > .setting-item,
-.vertical-tabs-container .pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle,
-.vertical-tabs-container .pm-grid .installed-plugins-container .setting-item {
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	.setting-group:nth-child(5)
+	.setting-items
+	.setting-item,
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	.hotkey-list-container
+	> .setting-item,
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	.setting-group
+	> .setting-group-search
+	+ .setting-items
+	.setting-item.mod-toggle,
+.vertical-tabs-container
+	.pm-grid
+	.installed-plugins-container
+	.setting-item.mod-toggle {
 	border: 1px solid var(--background-modifier-border);
 	border-radius: 8px;
 	padding: 1em;
-
-  justify-content: center;
+	justify-content: center;
 	flex-direction: column;
 }
 
-.vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading) > .setting-item-info,
-.vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container > .setting-item > .setting-item-info,
-.vertical-tabs-container .pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle > .setting-item-info,
-.vertical-tabs-container .pm-grid .installed-plugins-container .setting-item > .setting-item-info {
-  width: 100%;
-  margin: 0 var(--size-4-4) var(--size-4-4);
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	.setting-group:nth-child(5)
+	.setting-items
+	.setting-item
+	> .setting-item-info,
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	.hotkey-list-container
+	> .setting-item
+	> .setting-item-info,
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	.setting-group
+	> .setting-group-search
+	+ .setting-items
+	.setting-item.mod-toggle
+	> .setting-item-info,
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	.installed-plugins-container
+	.setting-group-search
+	+ .setting-items
+	.setting-item
+	> .setting-item-info {
+	width: 100%;
+	margin: 0 var(--size-4-4) var(--size-4-4);
 	overflow: hidden;
 	overflow-wrap: anywhere;
 }
 
-.vertical-tabs-container .pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container)) .setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading) > .setting-item-control,
-.vertical-tabs-container .pm-grid.vertical-tab-content > .hotkey-list-container > .setting-item > .setting-item-control,
-.vertical-tabs-container .pm-grid .plugin-list-plugins > div > .setting-item.mod-toggle > .setting-item-control,
-.vertical-tabs-container .pm-grid .installed-plugins-container .setting-item > .setting-item-control {
-  margin-left: auto;
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content:not(:has(> .hotkey-list-container))
+	.setting-item:not(:has(~ .setting-item-heading)):not(.setting-item-heading)
+	> .setting-item-control,
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	> .hotkey-list-container
+	> .setting-item
+	> .setting-item-control,
+.vertical-tabs-container
+	.pm-grid
+	.plugin-list-plugins
+	> div
+	> .setting-item.mod-toggle
+	> .setting-item-control,
+.vertical-tabs-container
+	.pm-grid
+	.installed-plugins-container
+	.setting-item
+	> .setting-item-control {
+	margin-left: auto;
 }
 
-
-.vertical-tabs-container .pm-grid.vertical-tab-content > .setting-item:is(:has(~ .setting-item-heading), .setting-item-heading) {
+.vertical-tabs-container
+	.pm-grid.vertical-tab-content
+	> .setting-item:is(:has(~ .setting-item-heading), .setting-item-heading) {
 	grid-column: 1 / -1;
 }
 

@@ -30,3 +30,7 @@ Right click the config can open a menu to delete or rename the config.
 Support use lucide icon as custom config icon. (https://lucide.dev/)
 
 ![iconSetting](./images/iconSetting.png)
+
+### Additional
+
+If you encounter styling issues, verify that your Obsidian version is 1.11.7 or higher. If you are using a version below 1.11.7, please download version 1.0.6 of this plugin from the releases page.
